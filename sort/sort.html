@@ -1,0 +1,360 @@
+<!Doctype>
+<html>
+<head>
+	<title>快速排序法</title>
+</head>
+<body>
+	<select id="count">
+		<option>5</option>
+		<option>50</option>
+		<option>100</option>
+		<option>500</option>
+		<option>1000</option>
+		<option>10000</option>
+		<option>100000</option>
+	</select>
+	<textarea id="nums"></textarea>
+	<input type="button" value="生成随机数" id="create" />
+	<hr/>
+	<div>
+		<input type="button" value="冒泡法排序" data-func="bubbleSort" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<div>
+		<input type="button" value="冒泡法排序-优化-从前往后" data-func="bubbleSort1" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<div>
+		<input type="button" value="冒泡法排序-优化-从后往前" data-func="bubbleSort2" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<div>
+		<input type="button" value="冒泡法排序-优化-检测本次循环没有发生位置替换，提前停止循环" data-func="bubbleSort3" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<div>
+		<input type="button" value="快速排序" data-func="quickSort" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<div>
+		<input type="button" value="插入排序" data-func="insertSort" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<div>
+		<input type="button" value="二分插入排序" data-func="insertSort2" />
+		<p class="result"></p>
+		<p class="time"></p>
+		<p class="count"></p>
+	</div>
+	<hr/>
+	<script>
+
+		/*生成随机数 start*/
+		var countEle = document.querySelector('#count');
+		var createEle = document.querySelector('#create')
+		var numsEle = document.querySelector('#nums');
+		var randomNums = [];
+
+
+		var createNums = function(){
+			var count = countEle.value;
+			var nums = [];
+
+			for(var i=0;i<count;i++){
+				var num = Math.round(Math.random() * count * 10);
+				nums.push(num);
+			}
+
+			randomNums = nums;
+			numsEle.value = nums.join(',');
+		}
+		createEle.onclick = createNums;
+
+		/*生成随机数 end*/
+
+
+		/*事件绑定 start*/
+		var sortEles = document.querySelectorAll('input[data-func]');
+		Array.prototype.slice.call(sortEles).forEach(function(sortEle){
+			sortEle.onclick = function(){
+
+				var randomNumsCopy = randomNums.slice(0);
+				var func = this.getAttribute('data-func');
+				var timeStart = Date.now();
+				var result = func && window[func](randomNumsCopy);
+				var timeEnd = Date.now();
+
+				var parentNode =this.parentNode; 
+				var resultEle = parentNode.querySelector('.result');
+				var timeEle = parentNode.querySelector('.time');
+				var countEle = parentNode.querySelector('.count');
+
+				resultEle.innerHTML = result.join(',');
+				timeEle.innerHTML = '耗时：' + (timeEnd - timeStart) + 'ms';
+				countEle.innerHTML = '对比次数：' + window[func]._count;
+			}
+		})
+		/*事件绑定 end*/
+
+
+		/*冒泡法排序 start*/
+		var bubbleSort = function(arr){
+			if(arr.length <= 1){
+				return arr;
+			}
+
+			var arrLen = arr.length;
+			var count = 0;
+
+			for(var i=0;i<arrLen;i++){
+				for(var j=0;j<arrLen;j++){
+					var temp;
+					if(i==j){
+						continue;
+					}
+					if(arr[j] > arr[j+1]){
+						temp = arr[j+1];
+						arr[j+1] = arr[j];
+						arr[j] = temp;
+					}
+
+					count++;
+				}
+			}
+
+			//记录对比次数
+			bubbleSort._count = count;
+			return arr;
+		}
+		/*冒泡法排序 end*/
+
+
+
+		/*冒泡法排序 start*/
+		var bubbleSort1 = function(arr){
+			if(arr.length <= 1){
+				return arr;
+			}
+
+			var arrLen = arr.length;
+			var count = 0;
+
+			for(var i=0;i<arrLen;i++){
+				//console.log(i,'--------------------------');
+				for(var j=1;j<arrLen-i;j++){
+					var temp;
+					//console.log(j);
+					if(arr[j] < arr[j-1]){
+						temp = arr[j-1];
+						arr[j-1] = arr[j];
+						arr[j] = temp;
+					}
+					count++;
+				}
+			}
+
+			//记录对比次数
+			bubbleSort1._count = count;
+			return arr;
+		}
+		/*冒泡法排序 end*/
+
+
+		/*冒泡法排序 start*/
+		var bubbleSort2 = function(arr){
+			if(arr.length <= 1){
+				return arr;
+			}
+
+			var arrLen = arr.length;
+			var count = 0;
+
+			for(var i=0;i<arrLen;i++){
+				//console.log(i,'--------------------------');
+				for(var j=arrLen-1;j>i;j--){
+					var temp;
+					//console.log(j);
+					if(i==j){
+						continue;
+					}
+					if(arr[j] < arr[j-1]){
+						temp = arr[j-1];
+						arr[j-1] = arr[j];
+						arr[j] = temp;
+					}
+
+					count++;
+				}
+			}
+
+			//记录对比次数
+			bubbleSort2._count = count;
+			return arr;
+		}
+		/*冒泡法排序 end*/
+
+
+
+		/*冒泡法排序 start*/
+		var bubbleSort3 = function(arr){
+			if(arr.length <= 1){
+				return arr;
+			}
+
+			var arrLen = arr.length;
+			var count = 0;
+			var sorted = false;
+
+			for(var i=0;i<arrLen;i++){
+				//console.log(i,'--------------------------');
+				sorted = false;
+				for(var j=1;j<arrLen-i;j++){
+					var temp;
+					//console.log(j);
+					if(arr[j] < arr[j-1]){
+						temp = arr[j-1];
+						arr[j-1] = arr[j];
+						arr[j] = temp;
+
+						//记录本次循环是否有发生位置替换，如果没有替换表明剩下的数据都已经是排号序的
+						sorted = true;
+					}
+					count++;
+				}
+
+				//记录对比次数
+				bubbleSort3._count = count;
+
+				if(!sorted){
+					return arr;
+				}
+			}
+
+			return arr;
+		}
+		/*冒泡法排序 end*/
+
+
+
+		/*快速排序法 start*/
+		var quickSort = function(arr, count){
+			if(arr.length <= 1){
+				return arr;
+			}
+
+			var pivotIndex = Math.floor(arr.length / 2);
+			var pivot = arr.splice(pivotIndex, 1)[0];
+			var arrLen = arr.length;
+			var leftArr = [];
+			var rightArr = [];
+			var temp;
+			count = count || 0;
+
+			for(var i=0;i<arrLen;i++){
+				temp = arr[i];
+				if(temp < pivot){
+					leftArr.push(temp);
+				}else{
+					rightArr.push(temp);
+				}
+
+				count++;
+			}
+
+
+			//记录对比次数
+			quickSort._count = count;
+
+			return quickSort(leftArr, count).concat([pivot], quickSort(rightArr, count));
+		}
+
+		/*快速排序法 end*/
+
+
+		/*插入排序 start*/
+		var insertSort = function(arr){
+			if(arr.length <= 1){
+				return arr;
+			}
+
+			var arrLen = arr.length,
+				count=0,
+				i, j, temp;
+
+			for(i=1; i<arrLen; i++){
+				temp = arr[i];
+				j=i-1;
+
+				while(j>=0&&temp<arr[j]){
+					arr[j+1] = arr[j];
+					j--;
+
+					count++;
+
+					//记录对比次数
+					insertSort._count = count;
+				}
+
+				arr[j+1] = temp;
+			}
+
+			return arr;
+		}
+		/*插入排序 end*/
+
+
+		/*二分插入排序 start*/
+		var insertSort2 = function(arr){
+			debugger;
+			var len = arr.length,
+				count = 0,
+				i, j, tmp, low, high, mid;
+
+			for(i = 1; i < len; i++){
+				tmp = arr[i];
+				low = 0;
+				high = i - 1;
+				while(low <= high){
+					mid = parseInt((low + high)/2, 10);
+					if(tmp < arr[mid]){
+						high = mid - 1;
+					}else{
+						low = mid + 1;	
+					}
+					
+				}
+				for(j = i - 1; j >= high+1; j--){
+					arr[j+1] = arr[j];
+
+					count++;
+
+				}
+				arr[j+1] = tmp;
+			}
+			insertSort2._count = count;
+			return arr;
+		}
+		/*二分插入排序 end*/
+
+
+	</script>
+</body>
+</html>
